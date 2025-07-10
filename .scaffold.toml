@@ -1,0 +1,170 @@
+[templates.mvc-controller]
+description = "ASP.NET MVC Controller with Views"
+
+required_args = [
+    { name = "name", description = "Controller name without 'Controller' suffix" },
+    { name = "namespace", description = "Full namespace for the controller" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/mvc/controller.cs", destination = "Controllers/{{name}}Controller.cs" },
+    { source = "templates/mvc/view-index.cshtml", destination = "Views/{{name}}/Index.cshtml" },
+    { source = "templates/mvc/view-create.cshtml", destination = "Views/{{name}}/Create.cshtml" }
+]
+
+[templates.react-component]
+description = "React functional component with TypeScript"
+
+required_args = [
+    { name = "name", description = "Component name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "hasProps", default = "false", description = "Whether component has props interface" }
+]
+
+files = [
+    { source = "templates/react/component.tsx", destination = "src/components/{{name}}.tsx" },
+    { source = "templates/react/component.test.tsx", destination = "src/components/__tests__/{{name}}.test.tsx" }
+]
+
+[templates.go-service]
+description = "Go service with interface and implementation"
+
+required_args = [
+    { name = "name", description = "Service name" },
+    { name = "package", description = "Package name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/go/service.go", destination = "{{package}}/{{name}}_service.go" },
+    { source = "templates/go/service_test.go", destination = "{{package}}/{{name}}_service_test.go" }
+]
+
+[templates.csharp-usecase]
+description = "C# UseCase implementation with Request and Response"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Application)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "UseCase name (e.g., CreateUser)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/csharp/usecase.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}UseCase.cs" },
+    { source = "templates/csharp/usecase-request.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}Request.cs" },
+    { source = "templates/csharp/usecase-response.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}Response.cs" }
+]
+
+[templates.csharp-entity]
+description = "C# Domain Entity"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Entity name (e.g., User)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/csharp/entity.cs", destination = "{{namespace}}/{{domain}}/Entities/{{name}}.cs" }
+]
+
+[templates.csharp-valueobject]
+description = "C# Value Object"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Value object name (e.g., Email)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "type", default = "string", description = "Underlying value type" }
+]
+
+files = [
+    { source = "templates/csharp/valueobject.cs", destination = "{{namespace}}/{{domain}}/ValueObjects/{{name}}.cs" }
+]
+
+[templates.csharp-repository]
+description = "C# Repository interface and implementation"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "entity", description = "Entity name (e.g., User)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/csharp/repository-interface.cs", destination = "{{namespace}}/{{domain}}/Repositories/I{{entity}}Repository.cs" },
+    { source = "templates/csharp/repository-impl.cs", destination = "Infrastructure/{{domain}}/Repositories/{{entity}}Repository.cs" }
+]
+
+[templates.csharp-exception]
+description = "C# Domain Exception class"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "code", description = "Error code (e.g., EUS_001_001)" },
+    { name = "name", description = "Exception name (e.g., UserNameRequired)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "message", default = "エラーが発生しました。", description = "Default error message" },
+    { name = "resolution", default = "システム管理者にお問い合わせください。", description = "Resolution guidance" }
+]
+
+files = [
+    { source = "templates/csharp/exception.cs", destination = "{{namespace}}/{{domain}}/Exceptions/{{code}}_{{name}}Exception.cs" }
+]
+
+[templates.csharp-webapi-controller]
+description = "ASP.NET Core Web API Controller"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Presentation)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Controller name without 'Controller' suffix" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "route", default = "api/[controller]", description = "Route template" }
+]
+
+files = [
+    { source = "templates/csharp/webapi-controller.cs", destination = "{{namespace}}/Controllers/{{name}}Controller.cs" }
+]

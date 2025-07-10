@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "{{name}} Index";
+}
+
+<h1>{{name}} Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @* Add column headers here *@
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @* Add table rows here *@
+        <tr>
+            <td>
+                @* Add data here *@
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="1">Edit</a> |
+                <a asp-action="Details" asp-route-id="1">Details</a> |
+                <a asp-action="Delete" asp-route-id="1">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@* Generated on {{date}} by {{author}} *@
