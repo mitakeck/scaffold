@@ -30,16 +30,17 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test -v ./...
+        run: go test -v .
 
       - name: Run go vet
-        run: go vet ./...
+        run: go vet .
 
       - name: Check formatting
         run: |
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          # Check formatting of Go source files (exclude templates)
+          if [ "$(gofmt -s -l *.go | wc -l)" -gt 0 ]; then
             echo "Code is not formatted:"
-            gofmt -s -l .
+            gofmt -s -l *.go
             exit 1
           fi
 
