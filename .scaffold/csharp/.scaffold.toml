@@ -1,0 +1,115 @@
+[templates.usecase]
+description = "C# UseCase implementation with Request and Response"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Application)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "UseCase name (e.g., CreateUser)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/usecase.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}UseCase.cs" },
+    { source = "templates/usecase-request.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}Request.cs" },
+    { source = "templates/usecase-response.cs", destination = "{{namespace}}/{{domain}}/Usecases/{{name}}/{{name}}Response.cs" }
+]
+
+[templates.entity]
+description = "C# Domain Entity"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Entity name (e.g., User)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/entity.cs", destination = "{{namespace}}/{{domain}}/Entities/{{name}}.cs" }
+]
+
+[templates.valueobject]
+description = "C# Value Object"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Value object name (e.g., Email)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "type", default = "string", description = "Underlying value type" }
+]
+
+files = [
+    { source = "templates/valueobject.cs", destination = "{{namespace}}/{{domain}}/ValueObjects/{{name}}.cs" }
+]
+
+[templates.repository]
+description = "C# Repository interface and implementation"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "entity", description = "Entity name (e.g., User)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/repository-interface.cs", destination = "{{namespace}}/{{domain}}/Repositories/I{{entity}}Repository.cs" },
+    { source = "templates/repository-impl.cs", destination = "Infrastructure/{{domain}}/Repositories/{{entity}}Repository.cs" }
+]
+
+[templates.exception]
+description = "C# Domain Exception class"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Domain)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "code", description = "Error code (e.g., EUS_001_001)" },
+    { name = "name", description = "Exception name (e.g., UserNameRequired)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "message", default = "エラーが発生しました。", description = "Default error message" },
+    { name = "resolution", default = "システム管理者にお問い合わせください。", description = "Resolution guidance" }
+]
+
+files = [
+    { source = "templates/exception.cs", destination = "{{namespace}}/{{domain}}/Exceptions/{{code}}_{{name}}Exception.cs" }
+]
+
+[templates.webapi-controller]
+description = "ASP.NET Core Web API Controller"
+
+required_args = [
+    { name = "namespace", description = "Base namespace (e.g., Presentation)" },
+    { name = "domain", description = "Domain name (e.g., Users)" },
+    { name = "name", description = "Controller name without 'Controller' suffix" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "route", default = "api/[controller]", description = "Route template" }
+]
+
+files = [
+    { source = "templates/webapi-controller.cs", destination = "{{namespace}}/Controllers/{{name}}Controller.cs" }
+]

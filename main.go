@@ -36,39 +36,79 @@ type Config struct {
 }
 
 type ScaffoldTool struct {
-	config     *Config
-	configPath string
+	config       *Config
+	configPath   string
+	categoryPath string
 }
 
 func NewScaffoldTool() *ScaffoldTool {
 	return &ScaffoldTool{}
 }
 
-func (s *ScaffoldTool) findConfigFile() (string, error) {
+func (s *ScaffoldTool) findScaffoldDir() (string, error) {
 	searchPaths := []string{
-		".scaffold.toml",
-		filepath.Join(os.Getenv("HOME"), ".scaffold.toml"),
-		filepath.Join(os.Getenv("HOME"), ".config", "scaffold", ".scaffold.toml"),
+		".scaffold",
+		filepath.Join(os.Getenv("HOME"), ".scaffold"),
+		filepath.Join(os.Getenv("HOME"), ".config", "scaffold"),
 	}
 
 	for _, path := range searchPaths {
-		if _, err := os.Stat(path); err == nil {
+		if stat, err := os.Stat(path); err == nil && stat.IsDir() {
 			return path, nil
 		}
 	}
 
-	return "", fmt.Errorf("no .scaffold.toml configuration file found")
+	return "", fmt.Errorf("no .scaffold directory found")
 }
 
-func (s *ScaffoldTool) loadConfig() error {
-	configPath, err := s.findConfigFile()
+func (s *ScaffoldTool) getAvailableCategories() ([]string, error) {
+	scaffoldDir, err := s.findScaffoldDir()
 	if err != nil {
-		fmt.Println("Error: No .scaffold.toml configuration file found")
+		return nil, err
+	}
+
+	entries, err := os.ReadDir(scaffoldDir)
+	if err != nil {
+		return nil, err
+	}
+
+	var categories []string
+	for _, entry := range entries {
+		if entry.IsDir() {
+			configPath := filepath.Join(scaffoldDir, entry.Name(), ".scaffold.toml")
+			if _, err := os.Stat(configPath); err == nil {
+				categories = append(categories, entry.Name())
+			}
+		}
+	}
+
+	return categories, nil
+}
+
+func (s *ScaffoldTool) loadConfig(category string) error {
+	scaffoldDir, err := s.findScaffoldDir()
+	if err != nil {
+		fmt.Println("Error: No .scaffold directory found")
 		fmt.Println("Searched in:")
-		fmt.Println("  - ./.scaffold.toml")
-		fmt.Println("  - ~/.scaffold.toml")
-		fmt.Println("  - ~/.config/scaffold/.scaffold.toml")
+		fmt.Println("  - ./.scaffold")
+		fmt.Println("  - ~/.scaffold")
+		fmt.Println("  - ~/.config/scaffold")
 		return err
+	}
+
+	categoryPath := filepath.Join(scaffoldDir, category)
+	configPath := filepath.Join(categoryPath, ".scaffold.toml")
+
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		fmt.Printf("Error: Category '%s' not found\n", category)
+		categories, _ := s.getAvailableCategories()
+		if len(categories) > 0 {
+			fmt.Println("Available categories:")
+			for _, cat := range categories {
+				fmt.Printf("  %s\n", cat)
+			}
+		}
+		return fmt.Errorf("category not found")
 	}
 
 	config := &Config{}
@@ -78,6 +118,7 @@ func (s *ScaffoldTool) loadConfig() error {
 
 	s.config = config
 	s.configPath = configPath
+	s.categoryPath = categoryPath
 	return nil
 }
 
@@ -103,15 +144,19 @@ func (s *ScaffoldTool) expandVariables(text string, variables map[string]string)
 	})
 }
 
-func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwargs map[string]string) error {
+func (s *ScaffoldTool) generateTemplate(category, templateName string, args []string, kwargs map[string]string) error {
+	if err := s.loadConfig(category); err != nil {
+		return err
+	}
+
 	if s.config == nil || s.config.Templates == nil {
 		return fmt.Errorf("no templates defined in configuration")
 	}
 
 	template, exists := s.config.Templates[templateName]
 	if !exists {
-		fmt.Printf("Error: Template '%s' not found\n", templateName)
-		s.listTemplates()
+		fmt.Printf("Error: Template '%s' not found in category '%s'\n", templateName, category)
+		s.listTemplates(category)
 		return fmt.Errorf("template not found")
 	}
 
@@ -127,7 +172,7 @@ func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwar
 		for i, arg := range template.RequiredArgs {
 			usage[i] = "<" + arg.Name + ">"
 		}
-		fmt.Printf("Usage: scaffold generate %s %s [options]\n", templateName, strings.Join(usage, " "))
+		fmt.Printf("Usage: scaffold %s %s %s [options]\n", category, templateName, strings.Join(usage, " "))
 		return fmt.Errorf("missing required arguments")
 	}
 
@@ -149,10 +194,8 @@ func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwar
 		variables[k] = v
 	}
 
-	configDir := filepath.Dir(s.configPath)
-
 	for _, file := range template.Files {
-		sourcePath := filepath.Join(configDir, s.expandVariables(file.Source, variables))
+		sourcePath := filepath.Join(s.categoryPath, s.expandVariables(file.Source, variables))
 		destPath := s.expandVariables(file.Destination, variables)
 
 		if _, err := os.Stat(sourcePath); os.IsNotExist(err) {
@@ -195,13 +238,38 @@ func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwar
 	return nil
 }
 
-func (s *ScaffoldTool) listTemplates() {
-	if s.config == nil || s.config.Templates == nil {
-		fmt.Println("No templates available")
+func (s *ScaffoldTool) listCategories() {
+	categories, err := s.getAvailableCategories()
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Println("Available templates:")
+	if len(categories) == 0 {
+		fmt.Println("No categories available")
+		return
+	}
+
+	fmt.Println("Available categories:")
+	for _, category := range categories {
+		fmt.Printf("  %s\n", category)
+	}
+	fmt.Println("\nUsage: scaffold <category> <template> [args...]")
+	fmt.Println("       scaffold <category> list")
+	fmt.Println("       scaffold <category> info <template>")
+}
+
+func (s *ScaffoldTool) listTemplates(category string) {
+	if err := s.loadConfig(category); err != nil {
+		return
+	}
+
+	if s.config == nil || s.config.Templates == nil {
+		fmt.Printf("No templates available in category '%s'\n", category)
+		return
+	}
+
+	fmt.Printf("Available templates in '%s':\n", category)
 	for name, template := range s.config.Templates {
 		description := template.Description
 		if description == "" {
@@ -211,19 +279,23 @@ func (s *ScaffoldTool) listTemplates() {
 	}
 }
 
-func (s *ScaffoldTool) showTemplateInfo(templateName string) {
+func (s *ScaffoldTool) showTemplateInfo(category, templateName string) {
+	if err := s.loadConfig(category); err != nil {
+		return
+	}
+
 	if s.config == nil || s.config.Templates == nil {
-		fmt.Println("No templates available")
+		fmt.Printf("No templates available in category '%s'\n", category)
 		return
 	}
 
 	template, exists := s.config.Templates[templateName]
 	if !exists {
-		fmt.Printf("Template '%s' not found\n", templateName)
+		fmt.Printf("Template '%s' not found in category '%s'\n", templateName, category)
 		return
 	}
 
-	fmt.Printf("Template: %s\n", templateName)
+	fmt.Printf("Template: %s.%s\n", category, templateName)
 	description := template.Description
 	if description == "" {
 		description = "No description"
@@ -254,6 +326,12 @@ func (s *ScaffoldTool) showTemplateInfo(templateName string) {
 			fmt.Printf("  %s\n", file.Destination)
 		}
 	}
+
+	usage := make([]string, len(template.RequiredArgs))
+	for i, arg := range template.RequiredArgs {
+		usage[i] = "<" + arg.Name + ">"
+	}
+	fmt.Printf("\nUsage: scaffold %s %s %s [key=value...]\n", category, templateName, strings.Join(usage, " "))
 }
 
 func parseKeyValue(args []string) ([]string, map[string]string) {
@@ -279,53 +357,39 @@ func main() {
 		Use:   "scaffold",
 		Short: "Universal Scaffold Tool",
 		Long:  "A universal scaffolding tool for generating code from templates",
-	}
-
-	var generateCmd = &cobra.Command{
-		Use:   "generate [template] [args...] [key=value...]",
-		Short: "Generate files from template",
-		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := tool.loadConfig(); err != nil {
-				return err
+			if len(args) == 0 {
+				tool.listCategories()
+				return nil
 			}
 
-			templateName := args[0]
-			remainingArgs := args[1:]
-			positional, kwargs := parseKeyValue(remainingArgs)
-
-			return tool.generateTemplate(templateName, positional, kwargs)
-		},
-	}
-
-	var listCmd = &cobra.Command{
-		Use:   "list",
-		Short: "List available templates",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := tool.loadConfig(); err != nil {
-				return err
+			category := args[0]
+			if len(args) == 1 {
+				tool.listTemplates(category)
+				return nil
 			}
-			tool.listTemplates()
-			return nil
-		},
-	}
 
-	var infoCmd = &cobra.Command{
-		Use:   "info [template]",
-		Short: "Show template information",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := tool.loadConfig(); err != nil {
-				return err
+			subcommand := args[1]
+			switch subcommand {
+			case "list":
+				tool.listTemplates(category)
+				return nil
+			case "info":
+				if len(args) < 3 {
+					fmt.Printf("Usage: scaffold %s info <template>\n", category)
+					return fmt.Errorf("missing template name")
+				}
+				tool.showTemplateInfo(category, args[2])
+				return nil
+			default:
+				// Treat as template generation
+				templateName := subcommand
+				remainingArgs := args[2:]
+				positional, kwargs := parseKeyValue(remainingArgs)
+				return tool.generateTemplate(category, templateName, positional, kwargs)
 			}
-			tool.showTemplateInfo(args[0])
-			return nil
 		},
 	}
-
-	rootCmd.AddCommand(generateCmd)
-	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(infoCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
