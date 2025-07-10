@@ -259,3 +259,28 @@ files = [
     { source = "templates/claude-init/commands/optimize.md", destination = "{{name}}/.claude/commands/optimize.md" },
     { source = "templates/claude-init/commands/docs.md", destination = "{{name}}/.claude/commands/docs.md" }
 ]
+
+[templates.claude-multiagent]
+description = "Claude Code multi-agent communication system with tmux (based on nishimoto265/Claude-Code-Communication)"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "Multi-agent communication demo", description = "Project description" },
+    { name = "workers", default = "3", description = "Number of worker agents" }
+]
+
+files = [
+    { source = "templates/claude-multiagent/README.md", destination = "{{name}}/README.md" },
+    { source = "templates/claude-multiagent/CLAUDE.md", destination = "{{name}}/CLAUDE.md" },
+    { source = "templates/claude-multiagent/setup.sh", destination = "{{name}}/setup.sh" },
+    { source = "templates/claude-multiagent/agent-send.sh", destination = "{{name}}/agent-send.sh" },
+    { source = "templates/claude-multiagent/gitignore", destination = "{{name}}/.gitignore" },
+    { source = "templates/claude-multiagent/instructions/president.md", destination = "{{name}}/instructions/president.md" },
+    { source = "templates/claude-multiagent/instructions/boss.md", destination = "{{name}}/instructions/boss.md" },
+    { source = "templates/claude-multiagent/instructions/worker.md", destination = "{{name}}/instructions/worker.md" }
+]
