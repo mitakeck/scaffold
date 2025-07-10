@@ -129,31 +129,6 @@ files = [
 - **source**: `.scaffold.toml` ファイルからの相対パス
 - **destination**: 実行時のカレントディレクトリからの相対パス
 
-## 🏛️ C#/.NET アーキテクチャ
-
-C#テンプレートはDomain-Driven Design（DDD）とClean Architectureの原則に従って設計されています。
-
-### 生成されるディレクトリ構造
-
-```
-{namespace}/
-├── {domain}/
-│   ├── Usecases/{name}/     # ユースケース実装
-│   ├── Entities/            # ドメインエンティティ
-│   ├── ValueObjects/        # 値オブジェクト
-│   ├── Repositories/        # リポジトリインターフェース
-│   └── Exceptions/          # ドメイン例外
-└── Infrastructure/{domain}/Repositories/  # リポジトリ実装
-```
-
-### 引数の順序
-
-すべてのC#テンプレートは一貫した引数順序を使用します：
-
-1. **namespace** - 基本名前空間（先頭）
-2. **domain** - ドメイン名
-3. **name/entity/code** - テンプレート固有の名前
-4. **追加引数** - テンプレート固有の引数
 
 ## 🛠️ 開発
 
@@ -182,19 +157,6 @@ cp -r ../templates .
 ../scaffold generate csharp-usecase Application Users CreateUser
 ```
 
-## 📚 利用可能なテンプレート
-
-| テンプレート名 | 説明 | 対象技術 |
-|---|---|---|
-| `csharp-usecase` | ユースケース実装セット | C#/.NET |
-| `csharp-entity` | ドメインエンティティ | C#/.NET |
-| `csharp-valueobject` | 値オブジェクト | C#/.NET |
-| `csharp-repository` | リポジトリパターン | C#/.NET |
-| `csharp-exception` | ドメイン例外クラス | C#/.NET |
-| `csharp-webapi-controller` | Web APIコントローラー | ASP.NET Core |
-| `react-component` | TypeScriptコンポーネント | React |
-| `go-service` | サービス実装 | Go |
-| `mvc-controller` | MVCコントローラー | ASP.NET MVC |
 
 ## 🤝 コントリビューション
 
