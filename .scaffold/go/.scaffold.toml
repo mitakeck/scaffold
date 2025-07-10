@@ -1,0 +1,17 @@
+[templates.service]
+description = "Go service with interface and implementation"
+
+required_args = [
+    { name = "name", description = "Service name" },
+    { name = "package", description = "Package name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/service.go", destination = "{{package}}/{{name}}_service.go" },
+    { source = "templates/service_test.go", destination = "{{package}}/{{name}}_service_test.go" }
+]

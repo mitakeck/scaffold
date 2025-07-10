@@ -1,0 +1,64 @@
+[templates.claude-commands]
+description = "Claude Code custom slash command template"
+
+required_args = [
+    { name = "name", description = "Command name (e.g., refactor, debug, review)" },
+    { name = "description", description = "Command description" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/command.md", destination = ".claude/commands/{{name}}.md" }
+]
+
+[templates.claude-project-init]
+description = "Initialize AI development project with Claude Code configuration"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "AI-powered development project", description = "Project description" },
+    { name = "tech_stack", default = "TypeScript/React", description = "Primary technology stack" }
+]
+
+files = [
+    { source = "templates/CLAUDE.md", destination = "{{name}}/CLAUDE.md" },
+    { source = "templates/commands/refactor.md", destination = "{{name}}/.claude/commands/refactor.md" },
+    { source = "templates/commands/debug.md", destination = "{{name}}/.claude/commands/debug.md" },
+    { source = "templates/commands/review.md", destination = "{{name}}/.claude/commands/review.md" },
+    { source = "templates/commands/optimize.md", destination = "{{name}}/.claude/commands/optimize.md" },
+    { source = "templates/commands/docs.md", destination = "{{name}}/.claude/commands/docs.md" }
+]
+
+[templates.claude-multiagent]
+description = "Claude Code multi-agent communication system with tmux (based on nishimoto265/Claude-Code-Communication)"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "Multi-agent communication demo", description = "Project description" },
+    { name = "workers", default = "3", description = "Number of worker agents" }
+]
+
+files = [
+    { source = "templates/README.md", destination = "{{name}}/README.md" },
+    { source = "templates/CLAUDE.md", destination = "{{name}}/CLAUDE.md" },
+    { source = "templates/setup.sh", destination = "{{name}}/setup.sh" },
+    { source = "templates/agent-send.sh", destination = "{{name}}/agent-send.sh" },
+    { source = "templates/gitignore", destination = "{{name}}/.gitignore" },
+    { source = "templates/instructions/president.md", destination = "{{name}}/instructions/president.md" },
+    { source = "templates/instructions/boss.md", destination = "{{name}}/instructions/boss.md" },
+    { source = "templates/instructions/worker.md", destination = "{{name}}/instructions/worker.md" }
+]

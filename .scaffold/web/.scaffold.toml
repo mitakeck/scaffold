@@ -1,0 +1,47 @@
+[templates.react-component]
+description = "React functional component with TypeScript"
+
+required_args = [
+    { name = "name", description = "Component name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "hasProps", default = "false", description = "Whether component has props interface" }
+]
+
+files = [
+    { source = "templates/component.tsx", destination = "src/components/{{name}}.tsx" },
+    { source = "templates/component.test.tsx", destination = "src/components/__tests__/{{name}}.test.tsx" }
+]
+
+[templates.vite-react-ts]
+description = "Modern Vite + React + TypeScript project with full tooling setup"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "A React TypeScript project", description = "Project description" }
+]
+
+files = [
+    { source = "templates/package.json", destination = "{{name}}/package.json" },
+    { source = "templates/tsconfig.json", destination = "{{name}}/tsconfig.json" },
+    { source = "templates/tsconfig.node.json", destination = "{{name}}/tsconfig.node.json" },
+    { source = "templates/vite.config.ts", destination = "{{name}}/vite.config.ts" },
+    { source = "templates/eslint.config.js", destination = "{{name}}/eslint.config.js" },
+    { source = "templates/.prettierrc.json", destination = "{{name}}/.prettierrc.json" },
+    { source = "templates/.prettierignore", destination = "{{name}}/.prettierignore" },
+    { source = "templates/index.html", destination = "{{name}}/index.html" },
+    { source = "templates/gitignore", destination = "{{name}}/.gitignore" },
+    { source = "templates/src/main.tsx", destination = "{{name}}/src/main.tsx" },
+    { source = "templates/src/App.tsx", destination = "{{name}}/src/App.tsx" },
+    { source = "templates/src/App.css", destination = "{{name}}/src/App.css" },
+    { source = "templates/src/index.css", destination = "{{name}}/src/index.css" },
+    { source = "templates/src/vite-env.d.ts", destination = "{{name}}/src/vite-env.d.ts" }
+]
