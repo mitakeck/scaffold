@@ -152,7 +152,7 @@ func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwar
 	configDir := filepath.Dir(s.configPath)
 
 	for _, file := range template.Files {
-		sourcePath := filepath.Join(configDir, file.Source)
+		sourcePath := filepath.Join(configDir, s.expandVariables(file.Source, variables))
 		destPath := s.expandVariables(file.Destination, variables)
 
 		if _, err := os.Stat(sourcePath); os.IsNotExist(err) {

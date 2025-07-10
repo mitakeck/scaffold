@@ -168,3 +168,94 @@ optional_args = [
 files = [
     { source = "templates/csharp/webapi-controller.cs", destination = "{{namespace}}/Controllers/{{name}}Controller.cs" }
 ]
+
+[templates.claude-commands]
+description = "Claude Code custom slash command template"
+
+required_args = [
+    { name = "name", description = "Command name (e.g., refactor, debug, review)" },
+    { name = "description", description = "Command description" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" }
+]
+
+files = [
+    { source = "templates/claude/command.md", destination = ".claude/commands/{{name}}.md" }
+]
+
+[templates.vite-react-ts]
+description = "Modern Vite + React + TypeScript project with full tooling setup"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "A React TypeScript project", description = "Project description" }
+]
+
+files = [
+    { source = "templates/vite/package.json", destination = "{{name}}/package.json" },
+    { source = "templates/vite/tsconfig.json", destination = "{{name}}/tsconfig.json" },
+    { source = "templates/vite/tsconfig.node.json", destination = "{{name}}/tsconfig.node.json" },
+    { source = "templates/vite/vite.config.ts", destination = "{{name}}/vite.config.ts" },
+    { source = "templates/vite/eslint.config.js", destination = "{{name}}/eslint.config.js" },
+    { source = "templates/vite/.prettierrc.json", destination = "{{name}}/.prettierrc.json" },
+    { source = "templates/vite/.prettierignore", destination = "{{name}}/.prettierignore" },
+    { source = "templates/vite/index.html", destination = "{{name}}/index.html" },
+    { source = "templates/vite/gitignore", destination = "{{name}}/.gitignore" },
+    { source = "templates/vite/src/main.tsx", destination = "{{name}}/src/main.tsx" },
+    { source = "templates/vite/src/App.tsx", destination = "{{name}}/src/App.tsx" },
+    { source = "templates/vite/src/App.css", destination = "{{name}}/src/App.css" },
+    { source = "templates/vite/src/index.css", destination = "{{name}}/src/index.css" },
+    { source = "templates/vite/src/vite-env.d.ts", destination = "{{name}}/src/vite-env.d.ts" }
+]
+
+[templates.github-actions-ci]
+description = "GitHub Actions CI/CD workflow with tests, build, and deployment"
+
+required_args = [
+    { name = "type", description = "Project type (node, go, python, dotnet)" },
+    { name = "name", description = "Workflow name (e.g., ci, test-and-build)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "node_version", default = "20", description = "Node.js version" },
+    { name = "go_version", default = "1.23", description = "Go version" },
+    { name = "python_version", default = "3.12", description = "Python version" },
+    { name = "dotnet_version", default = "8.0.x", description = ".NET version" }
+]
+
+files = [
+    { source = "templates/github-actions/{{type}}-ci.yml", destination = ".github/workflows/{{name}}.yml" }
+]
+
+[templates.claude-project-init]
+description = "Initialize AI development project with Claude Code configuration"
+
+required_args = [
+    { name = "name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "AI-powered development project", description = "Project description" },
+    { name = "tech_stack", default = "TypeScript/React", description = "Primary technology stack" }
+]
+
+files = [
+    { source = "templates/claude-init/CLAUDE.md", destination = "{{name}}/CLAUDE.md" },
+    { source = "templates/claude-init/commands/refactor.md", destination = "{{name}}/.claude/commands/refactor.md" },
+    { source = "templates/claude-init/commands/debug.md", destination = "{{name}}/.claude/commands/debug.md" },
+    { source = "templates/claude-init/commands/review.md", destination = "{{name}}/.claude/commands/review.md" },
+    { source = "templates/claude-init/commands/optimize.md", destination = "{{name}}/.claude/commands/optimize.md" },
+    { source = "templates/claude-init/commands/docs.md", destination = "{{name}}/.claude/commands/docs.md" }
+]
