@@ -284,3 +284,21 @@ files = [
     { source = "templates/claude-multiagent/instructions/boss.md", destination = "{{name}}/instructions/boss.md" },
     { source = "templates/claude-multiagent/instructions/worker.md", destination = "{{name}}/instructions/worker.md" }
 ]
+
+[templates.makefile-advanced]
+description = "Advanced Makefile with auto-documentation and task grouping (based on Zenn article by loglass)"
+
+required_args = [
+    { name = "project_name", description = "Project name" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "type", default = "general", description = "Project type (docker/node/go/python/general)" }
+]
+
+files = [
+    { source = "templates/makefile-advanced/Makefile", destination = "Makefile" },
+    { source = "templates/makefile-advanced/help.awk", destination = "help.awk" }
+]
