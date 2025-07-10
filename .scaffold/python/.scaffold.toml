@@ -1,0 +1,65 @@
+[templates.fastapi-service]
+description = "FastAPI REST API service with modern Python patterns"
+
+required_args = [
+    { name = "name", description = "Service name (e.g., user-service, product-api)" },
+    { name = "module", description = "Python module name (e.g., user_service, product_api)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "version", default = "0.1.0", description = "Initial version" },
+    { name = "description", default = "FastAPI REST API service", description = "Service description" },
+    { name = "database", default = "sqlite", description = "Database type (sqlite, postgresql, mysql)" },
+    { name = "auth", default = "true", description = "Include authentication" },
+    { name = "docs", default = "true", description = "Include API documentation" },
+    { name = "testing", default = "true", description = "Include testing setup" },
+    { name = "docker", default = "true", description = "Include Docker configuration" }
+]
+
+files = [
+    { source = "templates/fastapi/pyproject.toml", destination = "{{name}}/pyproject.toml" },
+    { source = "templates/fastapi/main.py", destination = "{{name}}/{{module}}/main.py" },
+    { source = "templates/fastapi/models.py", destination = "{{name}}/{{module}}/models.py" },
+    { source = "templates/fastapi/database.py", destination = "{{name}}/{{module}}/database.py" },
+    { source = "templates/fastapi/routers/health.py", destination = "{{name}}/{{module}}/routers/health.py" },
+    { source = "templates/fastapi/routers/users.py", destination = "{{name}}/{{module}}/routers/users.py" },
+    { source = "templates/fastapi/config.py", destination = "{{name}}/{{module}}/config.py" },
+    { source = "templates/fastapi/requirements.txt", destination = "{{name}}/requirements.txt" },
+    { source = "templates/fastapi/README.md", destination = "{{name}}/README.md" },
+    { source = "templates/fastapi/Dockerfile", destination = "{{name}}/Dockerfile" },
+    { source = "templates/fastapi/docker-compose.yml", destination = "{{name}}/docker-compose.yml" },
+    { source = "templates/fastapi/.env.example", destination = "{{name}}/.env.example" },
+    { source = "templates/fastapi/tests/test_main.py", destination = "{{name}}/tests/test_main.py" }
+]
+
+[templates.mcp-server]
+description = "Python MCP (Model Context Protocol) server with mise + uv"
+
+required_args = [
+    { name = "name", description = "Server name (e.g., file-manager, database-connector)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "version", default = "0.1.0", description = "Initial version" },
+    { name = "description", default = "Python MCP server for Claude integration", description = "Server description" },
+    { name = "python_version", default = "3.12", description = "Python version" },
+    { name = "tools", default = "true", description = "Include tools support" },
+    { name = "resources", default = "true", description = "Include resources support" },
+    { name = "prompts", default = "false", description = "Include prompts support" }
+]
+
+files = [
+    { source = "templates/mcp-server/pyproject.toml", destination = "{{name}}-mcp-server/pyproject.toml" },
+    { source = "templates/mcp-server/.python-version", destination = "{{name}}-mcp-server/.python-version" },
+    { source = "templates/mcp-server/mise.toml", destination = "{{name}}-mcp-server/mise.toml" },
+    { source = "templates/mcp-server/src/main.py", destination = "{{name}}-mcp-server/src/{{name}}_mcp_server/main.py" },
+    { source = "templates/mcp-server/src/__init__.py", destination = "{{name}}-mcp-server/src/{{name}}_mcp_server/__init__.py" },
+    { source = "templates/mcp-server/README.md", destination = "{{name}}-mcp-server/README.md" },
+    { source = "templates/mcp-server/claude-config.json", destination = "{{name}}-mcp-server/claude-config.json" },
+    { source = "templates/mcp-server/tests/test_main.py", destination = "{{name}}-mcp-server/tests/test_main.py" },
+    { source = "templates/mcp-server/.env.example", destination = "{{name}}-mcp-server/.env.example" }
+]

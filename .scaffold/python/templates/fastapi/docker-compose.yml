@@ -1,0 +1,99 @@
+# {{name}} Docker Compose
+# Generated on {{date}} by {{author}}
+
+version: '3.8'
+
+services:
+  {{name}}:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=false
+      - ENVIRONMENT=development
+      {{#if database}}
+      - DB_HOST=database
+      - DB_PORT={{#if (eq database "postgresql")}}5432{{/if}}{{#if (eq database "mysql")}}3306{{/if}}{{#if (eq database "sqlite")}}0{{/if}}
+      - DB_NAME={{name}}
+      - DB_USER={{name}}_user
+      - DB_PASSWORD=password
+      {{/if}}
+    depends_on:
+      {{#if database}}
+      {{#if (neq database "sqlite")}}
+      - database
+      {{/if}}
+      {{/if}}
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  {{#if database}}
+  {{#if (eq database "postgresql")}}
+  database:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB={{name}}
+      - POSTGRES_USER={{name}}_user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{name}}_user -d {{name}}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  {{/if}}
+  
+  {{#if (eq database "mysql")}}
+  database:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE={{name}}
+      - MYSQL_USER={{name}}_user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  {{/if}}
+  {{/if}}
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  {{#if database}}
+  {{#if (eq database "postgresql")}}
+  postgres_data:
+  {{/if}}
+  {{#if (eq database "mysql")}}
+  mysql_data:
+  {{/if}}
+  {{/if}}
+  redis_data:

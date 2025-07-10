@@ -1,0 +1,74 @@
+# {{name}} MCP Server - mise configuration
+# Generated on {{date}} by {{author}}
+
+[tools]
+python = "{{python_version}}"
+uv = "latest"
+
+[env]
+# Development environment variables
+PYTHONPATH = "src"
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+
+# MCP Server configuration
+MCP_SERVER_NAME = "{{name}}"
+MCP_SERVER_VERSION = "{{version}}"
+LOG_LEVEL = "INFO"
+
+[tasks.install]
+description = "Install dependencies with uv"
+run = "uv sync --dev"
+
+[tasks.test]
+description = "Run tests"
+run = "uv run pytest"
+
+[tasks.test-cov]
+description = "Run tests with coverage"
+run = "uv run pytest --cov"
+
+[tasks.lint]
+description = "Run linting"
+run = [
+    "uv run black --check .",
+    "uv run isort --check-only .",
+    "uv run flake8 .",
+    "uv run mypy .",
+]
+
+[tasks.format]
+description = "Format code"
+run = [
+    "uv run black .",
+    "uv run isort .",
+]
+
+[tasks.dev]
+description = "Run in development mode"
+run = "uv run python -m {{name}}_mcp_server.main"
+
+[tasks.build]
+description = "Build package"
+run = "uv build"
+
+[tasks.clean]
+description = "Clean build artifacts"
+run = [
+    "rm -rf dist/",
+    "rm -rf build/",
+    "rm -rf *.egg-info/",
+    "rm -rf .pytest_cache/",
+    "rm -rf .mypy_cache/",
+    "rm -rf .coverage",
+    "rm -rf htmlcov/",
+    "find . -type d -name __pycache__ -exec rm -rf {} +",
+]
+
+[tasks.pre-commit]
+description = "Run pre-commit hooks"
+run = "uv run pre-commit run --all-files"
+
+[tasks.install-pre-commit]
+description = "Install pre-commit hooks"
+run = "uv run pre-commit install"

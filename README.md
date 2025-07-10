@@ -7,8 +7,11 @@ Universal Scaffold Tool は、様々な技術スタックに対応可能な汎�
 
 ## 🚀 特徴
 
-- **技術スタック非依存**: C#/.NET、React、Go など様々な言語・フレームワークに対応
+- **技術スタック非依存**: C#/.NET、Python、React、Go、Rust など様々な言語・フレームワークに対応
+- **AI統合**: Claude Code、Cursor AI、MCP (Model Context Protocol) との深い統合
 - **カテゴリ別組織化**: テンプレートを目的別にカテゴリ分けして管理
+- **階層テンプレート**: 複数の`.scaffold`ディレクトリからの設定マージ機能
+- **モダン開発環境**: mise + uv、Docker、FastAPI などの最新ツール対応
 - **テンプレートベース**: プレーンテキストファイルを使用した柔軟なテンプレート管理
 - **TOML設定**: シンプルで読みやすい設定ファイル形式
 - **変数展開**: `{{variable}}` 形式での動的コンテンツ生成
@@ -217,9 +220,17 @@ DDD（ドメイン駆動設計）とClean Architectureに基づいたC#テンプ
 
 ### 🤖 AI開発支援 (`ai`)
 
-Claude Codeを活用したAI開発プロジェクトのテンプレート群
+Claude Code、Cursor AI、MCP統合を含むAI開発プロジェクトのテンプレート群
 
 ```bash
+# Cursor AI用.cursorrules生成（技術スタック別）
+./scaffold ai claude-cursorrules react author="開発者名"
+./scaffold ai claude-cursorrules python author="開発者名"
+./scaffold ai claude-cursorrules go author="開発者名"
+
+# MCP (Model Context Protocol) サーバー生成
+./scaffold ai claude-mcp-server file-manager typescript
+
 # Claude Code カスタムコマンド生成
 ./scaffold ai claude-commands refactor "Code refactoring assistant"
 
@@ -228,6 +239,18 @@ Claude Codeを活用したAI開発プロジェクトのテンプレート群
 
 # Claude Code マルチエージェント通信システム
 ./scaffold ai claude-multiagent my-team-project
+```
+
+### 🐍 Python開発 (`python`)
+
+モダンなPython開発のためのテンプレート群（mise + uv対応）
+
+```bash
+# FastAPI REST APIサービス生成
+./scaffold python fastapi-service user-api user_api author="開発者名"
+
+# Python MCP サーバー生成（mise + uv環境）
+./scaffold python mcp-server file-manager author="開発者名"
 ```
 
 ### ⚡ Go開発 (`go`)
@@ -248,6 +271,11 @@ Goプロジェクトのためのサービスパターンテンプレート
 ├── csharp/
 │   ├── .scaffold.toml     # C#テンプレート設定
 │   └── templates/         # C#テンプレートファイル
+├── python/
+│   ├── .scaffold.toml     # Pythonテンプレート設定
+│   └── templates/         # Python テンプレートファイル
+│       ├── fastapi/       # FastAPI サービステンプレート
+│       └── mcp-server/    # MCP サーバーテンプレート
 ├── web/
 │   ├── .scaffold.toml     # Webテンプレート設定
 │   └── templates/         # Webテンプレートファイル
@@ -257,16 +285,30 @@ Goプロジェクトのためのサービスパターンテンプレート
 ├── ai/
 │   ├── .scaffold.toml     # AI開発設定
 │   └── templates/         # AI開発テンプレート
+│       ├── cursorrules/   # Cursor AI 設定テンプレート
+│       ├── mcp-server/    # TypeScript MCP サーバー
+│       └── cursor-docs/   # Cursor セットアップドキュメント
 └── go/
     ├── .scaffold.toml     # Go開発設定
     └── templates/         # Goテンプレートファイル
 ```
 
-### 設定ファイル検索順序
+### 📁 マルチスキャフォールド統合
 
-1. カレントディレクトリの `.scaffold/`
-2. ホームディレクトリの `~/.scaffold/`
-3. 設定ディレクトリの `~/.config/scaffold/`
+複数の`.scaffold`ディレクトリから設定を自動マージし、階層的なテンプレート管理を実現：
+
+#### 設定ファイル検索順序
+
+1. **カレントディレクトリ**: `.scaffold/` (最優先)
+2. **ホームディレクトリ**: `~/.scaffold/` 
+3. **設定ディレクトリ**: `~/.config/scaffold/` (最低優先)
+
+#### 設定マージ動作
+
+- 近いディレクトリの設定が遠いディレクトリの設定を上書き
+- 同名テンプレートは最も近い`.scaffold`ディレクトリのものを使用
+- テンプレートファイルも同様の優先順位で検索
+- カテゴリは全ディレクトリから重複なしでマージ
 
 ### 設定例
 
@@ -309,13 +351,20 @@ files = [
 ```
 scaffold/
 ├── main.go              # メインアプリケーション
+├── main_test.go         # 統合機能のテスト
 ├── .mise.toml          # Go バージョン管理
 ├── .scaffold/          # カテゴリ別テンプレート設定
-│   ├── csharp/         # C#/.NET テンプレート
-│   ├── web/            # Web開発テンプレート
-│   ├── devtools/       # 開発ツールテンプレート
-│   ├── ai/             # AI開発テンプレート
-│   └── go/             # Go開発テンプレート
+│   ├── csharp/         # C#/.NET テンプレート (6個)
+│   ├── python/         # Python テンプレート (2個)
+│   │   ├── fastapi/    # FastAPI サービステンプレート
+│   │   └── mcp-server/ # Python MCP サーバーテンプレート
+│   ├── web/            # Web開発テンプレート (2個)
+│   ├── devtools/       # 開発ツールテンプレート (2個)
+│   ├── ai/             # AI開発テンプレート (5個)
+│   │   ├── cursorrules/    # Cursor AI設定 (5言語)
+│   │   ├── mcp-server/     # TypeScript MCP サーバー
+│   │   └── cursor-docs/    # Cursor セットアップドキュメント
+│   └── go/             # Go開発テンプレート (1個)
 ├── .github/            # GitHub Actions ワークフロー
 └── CLAUDE.md           # Claude Code 用ガイド
 ```
@@ -323,15 +372,26 @@ scaffold/
 ### テスト
 
 ```bash
-# 特定のカテゴリのテンプレートをテスト
+# 従来のテンプレートテスト
 ./scaffold csharp usecase Application Users CreateUser
 ./scaffold web react-component TestComponent
 ./scaffold devtools makefile-advanced test-project
+
+# 新しいAI統合テンプレートテスト
+./scaffold ai claude-cursorrules react
+./scaffold ai claude-mcp-server test-server typescript
+
+# 新しいPythonテンプレートテスト
+./scaffold python fastapi-service test-api test_api
+./scaffold python mcp-server test-mcp
+
+# 統合テスト
+go test -v ./...
 ```
 
 ## 📚 利用可能なテンプレート
 
-### C# (.NET) - 6個のテンプレート
+### 🏛️ C# (.NET) - 6個のテンプレート
 - `usecase` - ユースケース実装 (Request/Response付き)
 - `entity` - ドメインエンティティ
 - `valueobject` - 値オブジェクト
@@ -339,21 +399,74 @@ scaffold/
 - `exception` - ドメイン例外クラス
 - `webapi-controller` - Web APIコントローラー
 
-### Web開発 - 2個のテンプレート
+### 🐍 Python - 2個のテンプレート
+- `fastapi-service` - FastAPI REST APIサービス (SQLAlchemy, 認証, テスト付き)
+- `mcp-server` - Python MCP サーバー (mise + uv, 構造化ログ, 型安全)
+
+### 🌐 Web開発 - 2個のテンプレート
 - `react-component` - React TypeScriptコンポーネント
 - `vite-react-ts` - Vite + React + TypeScript プロジェクト
 
-### 開発ツール - 2個のテンプレート
+### 🛠️ 開発ツール - 2個のテンプレート
 - `makefile-advanced` - 高機能Makefile (自動ドキュメント生成)
 - `github-actions-ci` - GitHub Actions CI/CDワークフロー
 
-### AI開発 - 3個のテンプレート
+### 🤖 AI開発 - 5個のテンプレート
+- `claude-cursorrules` - Cursor AI設定 (React, Python, Go, Rust, Node.js対応)
+- `claude-mcp-server` - TypeScript MCP サーバー
 - `claude-commands` - Claude Code カスタムコマンド
 - `claude-project-init` - AI開発プロジェクト初期化
 - `claude-multiagent` - マルチエージェント通信システム
 
-### Go開発 - 1個のテンプレート
+### ⚡ Go開発 - 1個のテンプレート
 - `service` - Goサービス (インターフェース + 実装 + テスト)
+
+## 🌟 新機能ハイライト
+
+### 🎯 AI統合テンプレート
+
+#### Cursor AI統合
+```bash
+# 技術スタック別の.cursorrules生成
+scaffold ai claude-cursorrules react     # React TypeScript用
+scaffold ai claude-cursorrules python    # Python用
+scaffold ai claude-cursorrules go        # Go用
+scaffold ai claude-cursorrules rust      # Rust用
+scaffold ai claude-cursorrules node      # Node.js用
+```
+
+#### MCP (Model Context Protocol) サーバー
+```bash
+# TypeScript MCP サーバー
+scaffold ai claude-mcp-server file-manager typescript
+
+# Python MCP サーバー (mise + uv)
+scaffold python mcp-server database-connector
+```
+
+### 🐍 モダンPython開発
+
+#### FastAPI マイクロサービス
+```bash
+# 完全なFastAPI サービス（認証、DB、テスト付き）
+scaffold python fastapi-service user-api user_api database=postgresql auth=true
+```
+
+#### mise + uv 統合
+- Python 3.12+ 対応
+- uv による高速パッケージ管理
+- mise による環境管理
+- 構造化ログ（structlog）
+- 完全な型安全性（mypy）
+
+### 🔄 マルチスキャフォールド統合
+
+複数の`.scaffold`ディレクトリからの自動設定マージにより：
+- プロジェクト固有のカスタムテンプレート
+- チーム共有テンプレート
+- 個人用グローバルテンプレート
+
+を同時に利用可能
 
 ## 🤝 コントリビューション
 

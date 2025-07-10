@@ -61,45 +61,108 @@ func (s *ScaffoldTool) findScaffoldDir() (string, error) {
 	return "", fmt.Errorf("no .scaffold directory found")
 }
 
-func (s *ScaffoldTool) getAvailableCategories() ([]string, error) {
-	scaffoldDir, err := s.findScaffoldDir()
-	if err != nil {
-		return nil, err
+// findAllScaffoldDirs returns all available .scaffold directories in priority order
+// (closest to pwd first, furthest last)
+func (s *ScaffoldTool) findAllScaffoldDirs() []string {
+	searchPaths := []string{
+		".scaffold",
+		filepath.Join(os.Getenv("HOME"), ".scaffold"),
+		filepath.Join(os.Getenv("HOME"), ".config", "scaffold"),
 	}
 
-	entries, err := os.ReadDir(scaffoldDir)
-	if err != nil {
-		return nil, err
+	var foundDirs []string
+	for _, path := range searchPaths {
+		if stat, err := os.Stat(path); err == nil && stat.IsDir() {
+			foundDirs = append(foundDirs, path)
+		}
+	}
+
+	return foundDirs
+}
+
+// findTemplateFile searches for a template file across all scaffold directories
+// Returns the path to the first found template file (closest to pwd)
+func (s *ScaffoldTool) findTemplateFile(category, templateFile string) string {
+	scaffoldDirs := s.findAllScaffoldDirs()
+	for _, scaffoldDir := range scaffoldDirs {
+		filePath := filepath.Join(scaffoldDir, category, templateFile)
+		if _, err := os.Stat(filePath); err == nil {
+			return filePath
+		}
+	}
+	return ""
+}
+
+func (s *ScaffoldTool) getAvailableCategories() ([]string, error) {
+	scaffoldDirs := s.findAllScaffoldDirs()
+	if len(scaffoldDirs) == 0 {
+		return nil, fmt.Errorf("no .scaffold directory found")
+	}
+
+	categorySet := make(map[string]bool)
+	for _, scaffoldDir := range scaffoldDirs {
+		entries, err := os.ReadDir(scaffoldDir)
+		if err != nil {
+			continue
+		}
+
+		for _, entry := range entries {
+			if entry.IsDir() {
+				configPath := filepath.Join(scaffoldDir, entry.Name(), ".scaffold.toml")
+				if _, err := os.Stat(configPath); err == nil {
+					categorySet[entry.Name()] = true
+				}
+			}
+		}
 	}
 
 	var categories []string
-	for _, entry := range entries {
-		if entry.IsDir() {
-			configPath := filepath.Join(scaffoldDir, entry.Name(), ".scaffold.toml")
-			if _, err := os.Stat(configPath); err == nil {
-				categories = append(categories, entry.Name())
-			}
-		}
+	for category := range categorySet {
+		categories = append(categories, category)
 	}
 
 	return categories, nil
 }
 
 func (s *ScaffoldTool) loadConfig(category string) error {
-	scaffoldDir, err := s.findScaffoldDir()
-	if err != nil {
+	scaffoldDirs := s.findAllScaffoldDirs()
+	if len(scaffoldDirs) == 0 {
 		fmt.Println("Error: No .scaffold directory found")
 		fmt.Println("Searched in:")
 		fmt.Println("  - ./.scaffold")
 		fmt.Println("  - ~/.scaffold")
 		fmt.Println("  - ~/.config/scaffold")
-		return err
+		return fmt.Errorf("no .scaffold directory found")
 	}
 
-	categoryPath := filepath.Join(scaffoldDir, category)
-	configPath := filepath.Join(categoryPath, ".scaffold.toml")
+	// Load configurations from all directories, with precedence (closer dirs override farther ones)
+	mergedConfig := &Config{Templates: make(map[string]Template)}
+	var primaryCategoryPath string
+	found := false
 
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+	// Load from furthest to closest (reverse order) so closer configs override
+	for i := len(scaffoldDirs) - 1; i >= 0; i-- {
+		scaffoldDir := scaffoldDirs[i]
+		categoryPath := filepath.Join(scaffoldDir, category)
+		configPath := filepath.Join(categoryPath, ".scaffold.toml")
+
+		if _, err := os.Stat(configPath); err == nil {
+			config := &Config{}
+			if _, err := toml.DecodeFile(configPath, config); err == nil {
+				// Merge templates from this config
+				for name, template := range config.Templates {
+					mergedConfig.Templates[name] = template
+				}
+				// Set primary category path to the closest one with valid config
+				if primaryCategoryPath == "" {
+					primaryCategoryPath = categoryPath
+				}
+				found = true
+			}
+		}
+	}
+
+	if !found {
 		fmt.Printf("Error: Category '%s' not found\n", category)
 		categories, _ := s.getAvailableCategories()
 		if len(categories) > 0 {
@@ -111,14 +174,9 @@ func (s *ScaffoldTool) loadConfig(category string) error {
 		return fmt.Errorf("category not found")
 	}
 
-	config := &Config{}
-	if _, err := toml.DecodeFile(configPath, config); err != nil {
-		return fmt.Errorf("error loading configuration: %v", err)
-	}
-
-	s.config = config
-	s.configPath = configPath
-	s.categoryPath = categoryPath
+	s.config = mergedConfig
+	s.configPath = filepath.Join(primaryCategoryPath, ".scaffold.toml")
+	s.categoryPath = primaryCategoryPath
 	return nil
 }
 
@@ -195,11 +253,11 @@ func (s *ScaffoldTool) generateTemplate(category, templateName string, args []st
 	}
 
 	for _, file := range template.Files {
-		sourcePath := filepath.Join(s.categoryPath, s.expandVariables(file.Source, variables))
+		sourcePath := s.findTemplateFile(category, s.expandVariables(file.Source, variables))
 		destPath := s.expandVariables(file.Destination, variables)
 
-		if _, err := os.Stat(sourcePath); os.IsNotExist(err) {
-			fmt.Printf("Error: Template file not found: %s\n", sourcePath)
+		if sourcePath == "" {
+			fmt.Printf("Error: Template file not found: %s\n", file.Source)
 			continue
 		}
 

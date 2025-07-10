@@ -1,0 +1,124 @@
+# Rules for AI - Rust Project  
+# Generated on {{date}} by {{author}}
+# Project: {{project_name}}
+
+You are an expert Rust developer. Follow these rules when working with this codebase:
+
+## Code Standards
+- Use Rust 2021 edition
+- Follow Rust naming conventions
+- Use rustfmt for code formatting
+- Run clippy for linting
+- Use meaningful names for variables and functions
+- Write idiomatic Rust code
+
+## Ownership and Borrowing
+- Prefer borrowing over cloning
+- Use references when possible
+- Understand lifetime annotations
+- Use Cow<T> for clone-on-write semantics
+- Avoid unnecessary .clone() calls
+
+## Error Handling
+- Use Result<T, E> for recoverable errors
+- Use Option<T> for optional values
+- Implement proper error types
+- Use ? operator for error propagation
+- Use panic! only for unrecoverable errors
+
+## File Organization
+```
+{{project_name}}/
+├── src/
+│   ├── main.rs       # Binary entrypoint
+│   ├── lib.rs        # Library root
+│   ├── models/       # Data structures
+│   ├── services/     # Business logic
+│   ├── utils/        # Utility functions
+│   └── config/       # Configuration
+├── tests/            # Integration tests
+├── benches/          # Benchmarks
+└── examples/         # Usage examples
+```
+
+## Memory Management
+- Use Box<T> for heap allocation
+- Use Rc<T> for shared ownership
+- Use Arc<T> for thread-safe shared ownership
+- Use RefCell<T> for interior mutability
+- Understand Drop trait implementation
+
+## Concurrency
+- Use std::thread for threading
+- Use channels for communication
+- Use Arc<Mutex<T>> for shared mutable state
+- Use async/await for asynchronous operations
+- Use tokio for async runtime
+
+## Dependencies
+- Use Cargo.toml for dependency management
+- Pin versions for reproducible builds
+- Use features flags to reduce binary size
+- Prefer crates.io packages
+- Use semantic versioning
+
+## Performance
+- Use iterators instead of for loops
+- Use Vec::with_capacity for known sizes
+- Use String::with_capacity for strings
+- Profile with cargo flamegraph
+- Use #[inline] judiciously
+
+{{#if testing}}
+## Testing
+- Write unit tests with #[test]
+- Use #[cfg(test)] for test modules
+- Write integration tests in tests/ directory
+- Use proptest for property-based testing
+- Mock external dependencies
+- Use cargo test for running tests
+{{/if}}
+
+## Macros
+- Use macros sparingly
+- Prefer functions over macros when possible
+- Use derive macros for common traits
+- Understand macro hygiene
+- Use proc macros for complex code generation
+
+## Traits
+- Use traits for shared behavior
+- Implement standard traits (Debug, Clone, etc.)
+- Use trait objects for dynamic dispatch
+- Use generic constraints effectively
+- Understand trait coherence rules
+
+{{#if docs}}
+## Documentation
+- Write doc comments with ///
+- Use examples in documentation
+- Generate docs with cargo doc
+- Document public APIs thoroughly
+- Use #[doc] attribute for complex docs
+{{/if}}
+
+## Development Workflow
+- Use cargo check for fast compilation
+- Use cargo clippy for linting
+- Use cargo fmt for formatting
+- Use cargo test for testing
+- Use cargo build --release for optimized builds
+
+## Common Patterns
+- Use builder pattern for complex constructors
+- Use newtype pattern for type safety
+- Use state machines with enums
+- Use RAII for resource management
+- Use pattern matching extensively
+
+## Avoid
+- Using unwrap() in production code
+- Ignoring compiler warnings
+- Using unsafe code unless necessary
+- Creating circular references with Rc
+- Using String when &str suffices

@@ -1,0 +1,124 @@
+# Rules for AI - Go Project
+# Generated on {{date}} by {{author}}
+# Project: {{project_name}}
+
+You are an expert Go developer. Follow these rules when working with this codebase:
+
+## Code Standards
+- Use Go 1.21+ features
+- Follow effective Go guidelines
+- Use gofmt for code formatting
+- Run go vet for static analysis
+- Use meaningful package and variable names
+- Write idiomatic Go code
+
+## Code Structure
+- Use interfaces to define contracts
+- Prefer composition over inheritance
+- Use embedding for code reuse
+- Keep interfaces small and focused
+- Use struct tags for JSON/DB mapping
+
+## Error Handling
+- Always handle errors explicitly
+- Use custom error types when needed
+- Wrap errors with context using fmt.Errorf
+- Return errors as the last return value
+- Use panic only for truly exceptional cases
+
+## File Organization
+```
+{{project_name}}/
+├── cmd/              # Application entrypoints
+├── internal/         # Private application code
+│   ├── handlers/     # HTTP handlers
+│   ├── services/     # Business logic
+│   ├── models/       # Data models
+│   └── config/       # Configuration
+├── pkg/              # Public library code
+├── api/              # API definitions
+├── web/              # Web assets
+└── scripts/          # Build and deployment scripts
+```
+
+## Concurrency
+- Use goroutines for concurrent operations
+- Use channels for communication
+- Implement proper synchronization with sync package
+- Use context for cancellation and timeouts
+- Avoid data races with proper synchronization
+
+## Dependencies
+- Use Go modules for dependency management
+- Pin specific versions in go.mod
+- Use go mod tidy regularly
+- Prefer standard library when possible
+- Use semantic versioning for releases
+
+## Database
+- Use database/sql with appropriate drivers
+- Use SQLX for enhanced SQL operations
+- Implement proper connection pooling
+- Use transactions for data consistency
+- Handle database timeouts appropriately
+
+## HTTP Services
+- Use net/http or frameworks like Gin/Echo
+- Implement proper middleware
+- Use context for request scoping
+- Implement graceful shutdown
+- Use structured logging
+
+## Performance
+- Use benchmarks for performance testing
+- Profile with pprof when needed
+- Use sync.Pool for object reuse
+- Avoid memory allocations in hot paths
+- Use buffered channels appropriately
+
+{{#if testing}}
+## Testing
+- Write unit tests with testing package
+- Use table-driven tests for multiple cases
+- Mock external dependencies
+- Test error conditions
+- Use testify for assertions
+- Run tests with race detector
+{{/if}}
+
+## Security
+- Validate all inputs
+- Use crypto/rand for random numbers
+- Implement proper authentication
+- Use HTTPS in production
+- Handle secrets securely
+
+{{#if docs}}
+## Documentation
+- Write clear package documentation
+- Use godoc for documentation
+- Document exported functions and types
+- Include examples in documentation
+- Keep README updated
+{{/if}}
+
+## Development Workflow
+- Use go fmt for formatting
+- Use go vet for static analysis
+- Use golangci-lint for comprehensive linting
+- Use go mod verify for dependency verification
+- Use semantic commit messages
+
+## Common Patterns
+- Use factory functions for constructors
+- Implement String() method for custom types
+- Use functional options pattern
+- Implement proper zero values
+- Use type assertions carefully
+
+## Avoid
+- Using init() functions unnecessarily
+- Ignoring errors
+- Using global variables
+- Mutating slices/maps passed as parameters
+- Using empty interface{} unnecessarily
