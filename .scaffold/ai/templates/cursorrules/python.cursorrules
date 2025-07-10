@@ -1,0 +1,116 @@
+# Rules for AI - Python Project
+# Generated on {{date}} by {{author}}
+# Project: {{project_name}}
+
+You are an expert Python developer. Follow these rules when working with this codebase:
+
+## Code Standards
+- Use Python 3.9+ features
+- Follow PEP 8 style guide strictly
+- Use type hints everywhere (mypy compatible)
+- Prefer pathlib over os.path
+- Use f-strings for string formatting
+- Follow the Zen of Python principles
+
+## Code Structure
+- Use dataclasses or Pydantic models for data structures
+- Implement proper exception handling
+- Use context managers for resource management
+- Follow single responsibility principle
+- Use abstract base classes for interfaces
+
+## Dependencies
+- Use pyproject.toml for project configuration
+- Pin exact versions in requirements.txt
+- Use virtual environments (venv or conda)
+- Prefer standard library when possible
+- Use poetry or pip-tools for dependency management
+
+## File Organization
+```
+src/
+├── {{project_name}}/
+│   ├── __init__.py
+│   ├── models/       # Data models
+│   ├── services/     # Business logic
+│   ├── utils/        # Utility functions
+│   └── config/       # Configuration
+├── tests/            # Test files
+├── docs/             # Documentation
+└── scripts/          # Utility scripts
+```
+
+## Error Handling
+- Use specific exception types
+- Create custom exceptions when needed
+- Always log errors appropriately
+- Use try-except-finally blocks properly
+- Validate input data early
+
+## Performance
+- Use generators for large datasets
+- Profile code with cProfile when needed
+- Use appropriate data structures (set, dict, list)
+- Avoid premature optimization
+- Use asyncio for I/O bound operations
+
+{{#if testing}}
+## Testing
+- Use pytest for testing framework
+- Write unit tests with good coverage (>80%)
+- Use fixtures for test data
+- Mock external dependencies
+- Test edge cases and error conditions
+- Use parametrize for multiple test cases
+{{/if}}
+
+## Database
+- Use SQLAlchemy for ORM
+- Always use connection pooling
+- Handle database transactions properly
+- Use migrations for schema changes
+- Index frequently queried columns
+
+## API Development
+- Use FastAPI for REST APIs
+- Use Pydantic for request/response models
+- Implement proper HTTP status codes
+- Use dependency injection
+- Document APIs with OpenAPI/Swagger
+
+## Security
+- Never commit secrets to version control
+- Use environment variables for configuration
+- Validate and sanitize all inputs
+- Use HTTPS in production
+- Implement proper authentication/authorization
+
+{{#if docs}}
+## Documentation
+- Write clear docstrings (Google or NumPy style)
+- Use type hints as documentation
+- Keep README updated with setup instructions
+- Document API endpoints
+- Use Sphinx for documentation generation
+{{/if}}
+
+## Development Workflow
+- Use black for code formatting
+- Use isort for import sorting
+- Use flake8 or ruff for linting
+- Use mypy for type checking
+- Use pre-commit hooks
+
+## Common Patterns
+- Use context managers for resources
+- Implement __repr__ and __str__ methods
+- Use property decorators for computed attributes
+- Use classmethod and staticmethod appropriately
+- Implement proper logging
+
+## Avoid
+- Using mutable default arguments
+- Bare except clauses
+- Star imports (from module import *)
+- Global variables
+- Ignoring type checker warnings

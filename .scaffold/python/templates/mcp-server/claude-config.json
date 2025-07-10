@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "{{name}}": {
+      "command": "uv",
+      "args": ["run", "{{name}}-mcp-server"],
+      "cwd": "/path/to/{{name}}-mcp-server",
+      "env": {
+        "LOG_LEVEL": "INFO",
+        "MCP_SERVER_NAME": "{{name}}-mcp-server",
+        "MCP_SERVER_VERSION": "{{version}}"
+      }
+    }
+  }
+}

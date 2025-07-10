@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the Universal Scaffold Tool, a cross-platform code generation tool written in Go that provides Rails/Laravel-style scaffolding for any technology stack. The tool uses a hierarchical category-based structure with plain text templates and TOML configuration to generate files with variable expansion.
 
+**Recent Major Enhancements (2025-07-10):**
+- **Multi-Scaffold Integration**: Supports hierarchical `.scaffold` directories with automatic configuration merging
+- **AI Development Templates**: Enhanced AI integration with Cursor AI, Claude Code, and MCP (Model Context Protocol) support
+- **Python Ecosystem**: Complete Python templates with FastAPI services and MCP servers using mise + uv
+- **Modern Development**: Advanced templates for cutting-edge development workflows
+
 ## Development Setup
 
 ### Build and Run
@@ -33,20 +39,30 @@ go build -o scaffold main.go
 ./scaffold <category> <template> [args...] [key=value...]
 
 # Examples
+# Traditional templates
 ./scaffold csharp usecase Application Users CreateUser author="Developer Name"
 ./scaffold web react-component UserProfile
 ./scaffold devtools makefile-advanced my-project type=node
-./scaffold ai claude-multiagent my-team
 ./scaffold go service UserService internal/services
+
+# NEW: AI Integration templates
+./scaffold ai claude-cursorrules react author="Developer Name"
+./scaffold ai claude-mcp-server file-manager typescript
+./scaffold ai claude-multiagent my-team
+
+# NEW: Python development templates
+./scaffold python fastapi-service user-api user_api database=postgresql
+./scaffold python mcp-server database-connector python_version=3.12
 ```
 
 ## Architecture
 
 ### Core Components
 
-**ScaffoldTool struct** (`main.go`): Main application logic
-- `findScaffoldDir()`: Searches for `.scaffold/` directory in order: current dir, home dir, `~/.config/scaffold/`
-- `loadConfig(category)`: Loads category-specific `.scaffold.toml` configuration
+**ScaffoldTool struct** (`main.go`): Main application logic with multi-scaffold integration
+- `findAllScaffoldDirs()`: Discovers all `.scaffold/` directories in priority order (closest to pwd first)
+- `findTemplateFile()`: Searches for template files across all scaffold directories with precedence
+- `loadConfig(category)`: Loads and merges category-specific `.scaffold.toml` configurations from multiple directories
 - `expandVariables()`: Template variable expansion with `{{variable}}` syntax
 - `generateTemplate()`: File generation with directory creation and overwrite protection
 

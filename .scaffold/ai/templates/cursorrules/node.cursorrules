@@ -1,0 +1,136 @@
+# Rules for AI - Node.js TypeScript Project
+# Generated on {{date}} by {{author}}
+# Project: {{project_name}}
+
+You are an expert Node.js TypeScript developer. Follow these rules when working with this codebase:
+
+## Code Standards
+- Use TypeScript with strict mode enabled
+- Follow Node.js best practices
+- Use ES2022+ features
+- Prefer async/await over callbacks
+- Use meaningful variable and function names
+- Write self-documenting code
+
+## Node.js Specific Guidelines
+- Use latest LTS version of Node.js
+- Use ES modules (import/export)
+- Handle process signals properly
+- Use environment variables for configuration
+- Implement proper logging
+- Use clustering for CPU-intensive tasks
+
+## File Organization
+```
+{{project_name}}/
+├── src/
+│   ├── controllers/  # Route handlers
+│   ├── services/     # Business logic
+│   ├── models/       # Data models
+│   ├── middleware/   # Express middleware
+│   ├── routes/       # Route definitions
+│   ├── utils/        # Utility functions
+│   └── config/       # Configuration
+├── tests/            # Test files
+├── docs/             # Documentation
+└── scripts/          # Utility scripts
+```
+
+## Express.js Patterns
+- Use Express.js for web applications
+- Implement proper middleware chain
+- Use express-validator for input validation
+- Handle errors with error middleware
+- Use helmet for security headers
+- Implement rate limiting
+
+## Database
+- Use Prisma or TypeORM for database operations
+- Implement proper connection pooling
+- Use transactions for data consistency
+- Handle database errors gracefully
+- Use migrations for schema changes
+
+## API Development
+- Follow REST API conventions
+- Use proper HTTP status codes
+- Implement API versioning
+- Use OpenAPI/Swagger for documentation
+- Implement proper authentication/authorization
+- Use compression middleware
+
+## Error Handling
+- Use custom error classes
+- Implement global error handlers
+- Log errors with proper context
+- Use try-catch blocks with async/await
+- Return meaningful error messages
+
+## Performance
+- Use Node.js built-in profiler
+- Implement caching strategies
+- Use connection pooling
+- Optimize database queries
+- Use CDN for static assets
+
+{{#if testing}}
+## Testing
+- Use Jest for unit testing
+- Use Supertest for API testing
+- Mock external dependencies
+- Write integration tests
+- Use test-driven development
+- Maintain high test coverage
+{{/if}}
+
+## Security
+- Validate all inputs
+- Use HTTPS in production
+- Implement proper authentication
+- Use environment variables for secrets
+- Implement CORS properly
+- Use security-focused linting rules
+
+## Dependencies
+- Use npm or yarn for package management
+- Pin exact versions in package-lock.json
+- Use npm audit for security vulnerabilities
+- Prefer well-maintained packages
+- Use semantic versioning
+
+## Development Workflow
+- Use ESLint for code linting
+- Use Prettier for code formatting
+- Use nodemon for development
+- Use TypeScript compiler for type checking
+- Use husky for git hooks
+
+## Deployment
+- Use PM2 for process management
+- Use Docker for containerization
+- Implement health checks
+- Use environment-specific configurations
+- Monitor application performance
+
+{{#if docs}}
+## Documentation
+- Write clear API documentation
+- Use JSDoc for function documentation
+- Keep README updated
+- Document environment variables
+- Document deployment procedures
+{{/if}}
+
+## Common Patterns
+- Use dependency injection
+- Implement repository pattern
+- Use factory pattern for object creation
+- Use observer pattern for events
+- Use middleware pattern for cross-cutting concerns
+
+## Avoid
+- Using synchronous file operations
+- Ignoring unhandled promise rejections
+- Using var instead of let/const
+- Mixing CommonJS and ES modules
+- Blocking the event loop

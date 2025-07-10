@@ -62,3 +62,51 @@ files = [
     { source = "templates/instructions/boss.md", destination = "{{name}}/instructions/boss.md" },
     { source = "templates/instructions/worker.md", destination = "{{name}}/instructions/worker.md" }
 ]
+
+[templates.claude-cursorrules]
+description = "Generate .cursorrules file for Cursor AI editor with technology-specific configurations"
+
+required_args = [
+    { name = "tech_stack", description = "Technology stack (react, python, go, rust, etc.)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "project_name", default = "{{tech_stack}}-project", description = "Project name" },
+    { name = "description", default = "AI-optimized development with Cursor", description = "Project description" },
+    { name = "conventions", default = "Standard conventions", description = "Code conventions" },
+    { name = "testing", default = "true", description = "Include testing guidelines" },
+    { name = "docs", default = "true", description = "Include documentation guidelines" }
+]
+
+files = [
+    { source = "templates/cursorrules/{{tech_stack}}.cursorrules", destination = ".cursorrules" },
+    { source = "templates/cursor-docs/README.md", destination = "CURSOR_SETUP.md" }
+]
+
+[templates.claude-mcp-server]
+description = "Generate MCP (Model Context Protocol) server for Claude integration"
+
+required_args = [
+    { name = "name", description = "Server name (e.g., file-manager, database-connector)" },
+    { name = "language", description = "Programming language (typescript, python, rust, go)" }
+]
+
+optional_args = [
+    { name = "author", default = "Generated", description = "Author name" },
+    { name = "date", default = "{{current_date}}", description = "Creation date" },
+    { name = "description", default = "MCP server for Claude integration", description = "Server description" },
+    { name = "version", default = "1.0.0", description = "Initial version" },
+    { name = "tools", default = "true", description = "Include tools support" },
+    { name = "resources", default = "true", description = "Include resources support" },
+    { name = "prompts", default = "false", description = "Include prompts support" }
+]
+
+files = [
+    { source = "templates/mcp-server/{{language}}/package.json", destination = "{{name}}-mcp-server/package.json" },
+    { source = "templates/mcp-server/{{language}}/src/index.ts", destination = "{{name}}-mcp-server/src/index.ts" },
+    { source = "templates/mcp-server/{{language}}/README.md", destination = "{{name}}-mcp-server/README.md" },
+    { source = "templates/mcp-server/{{language}}/tsconfig.json", destination = "{{name}}-mcp-server/tsconfig.json" },
+    { source = "templates/mcp-server/claude-config.json", destination = "{{name}}-mcp-server/claude-config.json" }
+]

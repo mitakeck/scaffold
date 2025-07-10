@@ -1,0 +1,81 @@
+[project]
+name = "{{name}}"
+version = "{{version}}"
+description = "{{description}}"
+authors = [
+    {name = "{{author}}"}
+]
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    {{#if auth}}
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    {{/if}}
+    {{#if database}}
+    {{#if (eq database "postgresql")}}
+    "psycopg2-binary>=2.9.0",
+    {{/if}}
+    {{#if (eq database "mysql")}}
+    "pymysql>=1.1.0",
+    {{/if}}
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    {{/if}}
+    "python-dotenv>=1.0.0",
+    "httpx>=0.25.0",
+    "structlog>=23.2.0",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+{{#if testing}}
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.25.0",
+]
+{{/if}}
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+    "pre-commit>=3.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+{{#if testing}}
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov={{module}} --cov-report=html --cov-report=term-missing"
+asyncio_mode = "auto"
+{{/if}}
+
+[tool.coverage.run]
+source = ["{{module}}"]
+omit = ["tests/*", "*/migrations/*"]
