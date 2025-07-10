@@ -74,7 +74,7 @@ func TestFindTemplateFile(t *testing.T) {
 	// Create test directories and files
 	localScaffold := ".scaffold"
 	homeScaffold := filepath.Join(tmpDir, ".scaffold")
-	
+
 	// Create directories
 	os.MkdirAll(filepath.Join(localScaffold, "testcat", "templates"), 0755)
 	os.MkdirAll(filepath.Join(homeScaffold, "testcat", "templates"), 0755)
@@ -82,7 +82,7 @@ func TestFindTemplateFile(t *testing.T) {
 	// Create template files
 	localTemplate := filepath.Join(localScaffold, "testcat", "templates", "test.txt")
 	homeTemplate := filepath.Join(homeScaffold, "testcat", "templates", "test.txt")
-	
+
 	os.WriteFile(localTemplate, []byte("local content"), 0644)
 	os.WriteFile(homeTemplate, []byte("home content"), 0644)
 
@@ -108,13 +108,13 @@ func TestGetAvailableCategoriesIntegration(t *testing.T) {
 	// Create test directories
 	localScaffold := ".scaffold"
 	homeScaffold := filepath.Join(tmpDir, ".scaffold")
-	
+
 	// Create category directories with config files
 	os.MkdirAll(filepath.Join(localScaffold, "localcat"), 0755)
 	os.MkdirAll(filepath.Join(homeScaffold, "homecat"), 0755)
 	os.MkdirAll(filepath.Join(homeScaffold, "sharedcat"), 0755)
 	os.MkdirAll(filepath.Join(localScaffold, "sharedcat"), 0755)
-	
+
 	// Create config files
 	os.WriteFile(filepath.Join(localScaffold, "localcat", ".scaffold.toml"), []byte("[templates]"), 0644)
 	os.WriteFile(filepath.Join(homeScaffold, "homecat", ".scaffold.toml"), []byte("[templates]"), 0644)
