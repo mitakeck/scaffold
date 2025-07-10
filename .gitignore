@@ -1,6 +1,8 @@
 # Compiled binaries
 scaffold
 scaffold.exe
+scaffold-*
+dist/
 
 # Test output directories
 test-output/
