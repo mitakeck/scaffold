@@ -25,10 +25,10 @@ type TemplateFile struct {
 }
 
 type Template struct {
-	Description   string        `toml:"description"`
-	RequiredArgs  []TemplateArg `toml:"required_args"`
-	OptionalArgs  []TemplateArg `toml:"optional_args"`
-	Files         []TemplateFile `toml:"files"`
+	Description  string         `toml:"description"`
+	RequiredArgs []TemplateArg  `toml:"required_args"`
+	OptionalArgs []TemplateArg  `toml:"optional_args"`
+	Files        []TemplateFile `toml:"files"`
 }
 
 type Config struct {
@@ -122,7 +122,7 @@ func (s *ScaffoldTool) generateTemplate(templateName string, args []string, kwar
 			argNames[i] = arg.Name
 		}
 		fmt.Printf("Required: %s\n", strings.Join(argNames, ", "))
-		
+
 		usage := make([]string, len(template.RequiredArgs))
 		for i, arg := range template.RequiredArgs {
 			usage[i] = "<" + arg.Name + ">"
