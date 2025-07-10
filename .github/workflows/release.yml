@@ -9,7 +9,7 @@ on:
       tag:
         description: 'Tag to release'
         required: true
-        default: 'v1.0.0'
+        default: 'v2.0.0'
 
 permissions:
   contents: write
@@ -36,71 +36,150 @@ jobs:
           # Create dist directory
           mkdir -p dist
 
-          # Build for different platforms
-          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/scaffold-linux-amd64 main.go
-          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/scaffold-linux-arm64 main.go
-          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/scaffold-darwin-amd64 main.go
-          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/scaffold-darwin-arm64 main.go
-          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o dist/scaffold-windows-amd64.exe main.go
-          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w" -o dist/scaffold-windows-arm64.exe main.go
+          # Build for different platforms with version info
+          VERSION="${{ github.event.inputs.tag || github.ref_name }}"
+          LDFLAGS="-s -w -X main.Version=${VERSION}"
+
+          # Linux
+          GOOS=linux GOARCH=amd64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-linux-amd64 main.go
+          GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-linux-arm64 main.go
+
+          # macOS
+          GOOS=darwin GOARCH=amd64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-darwin-amd64 main.go
+          GOOS=darwin GOARCH=arm64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-darwin-arm64 main.go
+
+          # Windows
+          GOOS=windows GOARCH=amd64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-windows-amd64.exe main.go
+          GOOS=windows GOARCH=arm64 go build -ldflags="${LDFLAGS}" -o dist/scaffold-windows-arm64.exe main.go
+
+          # Create convenient symlinks for easier naming
+          cd dist
+          ln -s scaffold-linux-amd64 scaffold-linux
+          ln -s scaffold-darwin-amd64 scaffold-macos-intel
+          ln -s scaffold-darwin-arm64 scaffold-macos-silicon
+          ln -s scaffold-windows-amd64.exe scaffold-windows.exe
 
       - name: Create checksums
         run: |
           cd dist
-          sha256sum * > checksums.txt
+          sha256sum scaffold-* > checksums.txt
+          echo "Generated checksums:"
+          cat checksums.txt
+
+      - name: Create archive packages
+        run: |
+          cd dist
+          
+          # Create zip packages for easier distribution
+          zip scaffold-linux-amd64.zip scaffold-linux-amd64
+          zip scaffold-linux-arm64.zip scaffold-linux-arm64
+          zip scaffold-darwin-amd64.zip scaffold-darwin-amd64
+          zip scaffold-darwin-arm64.zip scaffold-darwin-arm64
+          zip scaffold-windows-amd64.zip scaffold-windows-amd64.exe
+          zip scaffold-windows-arm64.zip scaffold-windows-arm64.exe
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
-          name: Release ${{ github.event.inputs.tag || github.ref_name }}
+          name: Universal Scaffold Tool ${{ github.event.inputs.tag || github.ref_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
           files: |
-            dist/*
+            dist/scaffold-*
+            dist/checksums.txt
           body: |
-            ## Universal Scaffold Tool ${{ github.event.inputs.tag || github.ref_name }}
+            # 🚀 Universal Scaffold Tool ${{ github.event.inputs.tag || github.ref_name }}
             
-            ### 📦 Downloads
+            A universal code generation tool with hierarchical template organization. Generate C#/.NET, React, Go, Makefile, and AI development templates with ease.
             
-            Choose the appropriate binary for your platform:
+            ## 📦 Quick Downloads
             
-            #### Linux
-            - **x64**: `scaffold-linux-amd64`
-            - **ARM64**: `scaffold-linux-arm64`
+            ### 🐧 Linux
+            - [**x64** (Intel/AMD)](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-linux-amd64) - Most common
+            - [**ARM64**](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-linux-arm64) - ARM processors
             
-            #### macOS
-            - **Intel**: `scaffold-darwin-amd64`
-            - **Apple Silicon**: `scaffold-darwin-arm64`
+            ### 🍎 macOS
+            - [**Apple Silicon** (M1/M2/M3)](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-darwin-arm64) - Recommended for newer Macs
+            - [**Intel**](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-darwin-amd64) - Older Macs
             
-            #### Windows
-            - **x64**: `scaffold-windows-amd64.exe`
-            - **ARM64**: `scaffold-windows-arm64.exe`
+            ### 🪟 Windows
+            - [**x64** (.exe)](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-windows-amd64.exe) - Most common
+            - [**ARM64** (.exe)](https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-windows-arm64.exe) - ARM processors
             
-            ### 🚀 Installation
+            ## ⚡ Quick Setup
             
-            1. Download the binary for your platform
-            2. Make it executable (Linux/macOS): `chmod +x scaffold-*`
-            3. Move to your PATH: `mv scaffold-* /usr/local/bin/scaffold`
-            4. Verify: `scaffold --help`
+            ### Linux/macOS (One-liner)
+            ```bash
+            # Linux (x64)
+            curl -L https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-linux-amd64 -o scaffold && chmod +x scaffold && sudo mv scaffold /usr/local/bin/
             
-            ### 📋 Usage
+            # macOS (Apple Silicon)
+            curl -L https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-darwin-arm64 -o scaffold && chmod +x scaffold && sudo mv scaffold /usr/local/bin/
+            
+            # macOS (Intel)
+            curl -L https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-darwin-amd64 -o scaffold && chmod +x scaffold && sudo mv scaffold /usr/local/bin/
+            ```
+            
+            ### Windows (PowerShell)
+            ```powershell
+            # Download to current directory
+            Invoke-WebRequest -Uri "https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/scaffold-windows-amd64.exe" -OutFile "scaffold.exe"
+            
+            # Add to PATH (run as Administrator)
+            Move-Item scaffold.exe C:\Windows\System32\scaffold.exe
+            ```
+            
+            ## 🎯 Quick Start
             
             ```bash
-            # List available templates
-            scaffold list
+            # List available template categories
+            scaffold
+            
+            # List C# templates
+            scaffold csharp list
             
             # Generate C# UseCase
-            scaffold generate csharp-usecase Application Users CreateUser
+            scaffold csharp usecase Application Users CreateUser
             
             # Generate React component
-            scaffold generate react-component UserProfile
+            scaffold web react-component UserProfile
+            
+            # Generate advanced Makefile
+            scaffold devtools makefile-advanced my-project
+            
+            # Initialize AI development project
+            scaffold ai claude-project-init my-ai-app
             ```
             
-            ### 🔐 Verification
+            ## 📋 Template Categories
             
-            Verify your download with SHA256 checksums (see `checksums.txt`):
+            - **🏛️ csharp** (6 templates) - C#/.NET DDD patterns
+            - **🌐 web** (2 templates) - React TypeScript & Vite  
+            - **🛠️ devtools** (2 templates) - Makefile & GitHub Actions
+            - **🤖 ai** (3 templates) - Claude Code integration
+            - **⚡ go** (1 template) - Go service patterns
+            
+            ## 🔐 Verification
+            
+            Verify your download integrity with SHA256:
             ```bash
-            sha256sum scaffold-* && cat checksums.txt
+            # Download checksums
+            curl -L https://github.com/mitakeck/scaffold/releases/download/${{ github.event.inputs.tag || github.ref_name }}/checksums.txt
+            
+            # Verify (Linux/macOS)
+            sha256sum scaffold && cat checksums.txt
+            
+            # Verify (Windows)
+            CertUtil -hashfile scaffold.exe SHA256
             ```
+            
+            ## 📖 Documentation
+            
+            - [📘 README](https://github.com/mitakeck/scaffold/blob/main/README.md) - Full documentation
+            - [🔧 Development Guide](https://github.com/mitakeck/scaffold/blob/main/CLAUDE.md) - For contributors
+            
+            ---
+            
+            **New in this release**: Hierarchical template organization with category-based commands for better discoverability and organization.

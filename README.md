@@ -17,13 +17,57 @@ Universal Scaffold Tool は、様々な技術スタックに対応可能な汎�
 
 ## 📦 インストール
 
-### 必要要件
+### 🚀 バイナリダウンロード（推奨）
 
+最新リリースから直接ダウンロードして即座に使用開始できます：
+
+#### Linux
+```bash
+# x64 (最も一般的)
+curl -L https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-linux-amd64 -o scaffold
+chmod +x scaffold
+sudo mv scaffold /usr/local/bin/
+
+# ARM64
+curl -L https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-linux-arm64 -o scaffold
+chmod +x scaffold
+sudo mv scaffold /usr/local/bin/
+```
+
+#### macOS
+```bash
+# Apple Silicon (M1/M2/M3) - 新しいMac推奨
+curl -L https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-darwin-arm64 -o scaffold
+chmod +x scaffold
+sudo mv scaffold /usr/local/bin/
+
+# Intel - 古いMac
+curl -L https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-darwin-amd64 -o scaffold
+chmod +x scaffold
+sudo mv scaffold /usr/local/bin/
+```
+
+#### Windows
+PowerShellを管理者として実行：
+```powershell
+# x64 (最も一般的)
+Invoke-WebRequest -Uri "https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-windows-amd64.exe" -OutFile "scaffold.exe"
+Move-Item scaffold.exe C:\Windows\System32\scaffold.exe
+
+# ARM64
+Invoke-WebRequest -Uri "https://github.com/mitakeck/scaffold/releases/latest/download/scaffold-windows-arm64.exe" -OutFile "scaffold.exe"
+Move-Item scaffold.exe C:\Windows\System32\scaffold.exe
+```
+
+### 🔧 ソースからビルド
+
+開発者向け、またはカスタマイズが必要な場合：
+
+#### 必要要件
 - Go 1.23+
 - [mise](https://mise.jdx.dev/) (推奨)
 
-### ビルド方法
-
+#### ビルド方法
 ```bash
 # リポジトリをクローン
 git clone https://github.com/mitakeck/scaffold.git
@@ -35,6 +79,72 @@ mise exec -- go build -o scaffold main.go
 
 # または直接Goでビルド
 go build -o scaffold main.go
+```
+
+### ✅ インストール確認
+
+```bash
+# コマンドが認識されることを確認
+scaffold --help
+
+# カテゴリ一覧表示
+scaffold
+
+# 簡単なテンプレート生成テスト
+scaffold devtools makefile-advanced test-project
+```
+
+### 🚨 トラブルシューティング
+
+#### Linuxで実行時にpermission deniedエラー
+```bash
+# 実行権限を付与
+chmod +x scaffold
+```
+
+#### macOSで「開発元が未確認」エラー
+```bash
+# 一時的に実行を許可
+sudo xattr -r -d com.apple.quarantine scaffold
+
+# または、システム設定 > セキュリティとプライバシー で許可
+```
+
+#### コマンドが見つからない (command not found)
+```bash
+# PATHに追加されているか確認
+echo $PATH | grep /usr/local/bin
+
+# 手動でPATHに追加 (bashの場合)
+echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# 手動でPATHに追加 (zshの場合)
+echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+#### Windows PowerShell実行ポリシーエラー
+```powershell
+# 実行ポリシーを一時的に変更
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### 🎁 その他のインストール方法
+
+#### Homebrewでのインストール（計画中）
+```bash
+# 将来的にサポート予定
+brew install mitakeck/tap/scaffold
+```
+
+#### パッケージマネージャーでのインストール（計画中）
+```bash
+# apt (Ubuntu/Debian) - 将来的にサポート予定
+sudo apt install scaffold
+
+# yum/dnf (RHEL/CentOS/Fedora) - 将来的にサポート予定  
+sudo dnf install scaffold
 ```
 
 ## 🏗️ 使用方法
